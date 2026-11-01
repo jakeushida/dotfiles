@@ -1,0 +1,13 @@
+# Brewfile.extra — maintained BY HAND. `brew bundle dump` writes ./Brewfile and
+# would overwrite anything added there, so entries it can't detect live here.
+# Install with:  brew bundle --file=Brewfile.extra
+
+# These casks run an installer package, so the apps on this Mac weren't
+# installed (or adoptable) through Homebrew and the dump doesn't see them.
+# (Zoom and Acrobat Reader moved to Brewfile once brew installed them.)
+cask "onedrive"   # on this Mac OneDrive self-updates ahead of the cask, so brew bundle may warn; harmless
+
+# Not installed by Homebrew — set up by hand on a new Mac:
+#   GlobalProtect     uni VPN: follow the University of Melbourne's VPN instructions
+#   LockDown Browser  exam browser: download via the link on the exam's Canvas page
+#   Minecraft         minecraft.net (Homebrew's cask needs Rosetta 2)

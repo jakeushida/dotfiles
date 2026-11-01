@@ -1,0 +1,4 @@
+cm-super
+fontawesome6
+latexmk
+moderncv

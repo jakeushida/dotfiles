@@ -6,9 +6,11 @@ USAGE=$(cat <<-END
 
     OPTIONS:
         --tmux       install tmux
-        --zsh        install zsh
+        --zsh        install zsh (Linux only; macOS already has it)
         --force      overwrite existing oh-my-zsh
 
+    On a Mac it also installs Homebrew, everything in Brewfile
+    and Brewfile.extra, and the LaTeX packages in tex-packages.txt.
     If OPTIONS are passed they will be installed
     with apt if on linux or brew if on OSX
 END
@@ -59,17 +61,24 @@ if [ $machine == "Linux" ]; then
     fi
 # Installing on mac with homebrew
 elif [ $machine == "Mac" ]; then
-    yes | brew install coreutils rsync || true  # Mac won't have realpath before coreutils installed
+    DOT_DIR=$(cd "$(dirname "$0")" && pwd)
 
-    if ! command -v uv &> /dev/null; then
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-    else
-        echo "uv already installed, skipping..."
+    # 1. Homebrew (only if missing)
+    if ! command -v brew &> /dev/null; then
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    DOT_DIR=$(dirname $(realpath $0))
-    [ $zsh == true ] && yes | brew install zsh || true
-    [ $tmux == true ] && yes | brew install tmux || true
+    # 2. Apps and tools from both Brewfiles (sign in to the App Store first for the mas apps)
+    brew bundle --no-upgrade --file="$DOT_DIR/Brewfile"       || echo "⚠️  some Brewfile items failed (see above)"
+    brew bundle --no-upgrade --file="$DOT_DIR/Brewfile.extra" || echo "⚠️  some Brewfile.extra items failed (see above)"
+
+    # 3. LaTeX packages on top of BasicTeX
+    eval "$(/usr/libexec/path_helper)"    # puts the just-installed TeX on PATH
+    sudo tlmgr update --self
+    sudo tlmgr install $(cat "$DOT_DIR/tex-packages.txt")
+
+    [ $tmux == true ] && brew install tmux
 fi
 
 # Setting up oh my zsh
