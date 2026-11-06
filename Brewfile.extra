@@ -10,4 +10,5 @@ cask "onedrive"   # on this Mac OneDrive self-updates ahead of the cask, so brew
 # Not installed by Homebrew — set up by hand on a new Mac:
 #   GlobalProtect     uni VPN: follow the University of Melbourne's VPN instructions
 #   LockDown Browser  exam browser: download via the link on the exam's Canvas page
+#                     Needs Rosetta 2 first: softwareupdate --install-rosetta --agree-to-license
 #   Minecraft         minecraft.net (Homebrew's cask needs Rosetta 2)
