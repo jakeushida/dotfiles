@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- A unique name for this job -->
+    <key>Label</key>
+    <string>com.jake.update-check</string>
+
+    <!-- What to run -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/Jake/Scripts/update-check.sh</string>
+    </array>
+
+    <!-- When: every day at 19:00. If the Mac is asleep then, it runs when it wakes. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>19</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Where any unexpected output or errors go -->
+    <key>StandardOutPath</key>
+    <string>/Users/Jake/Scripts/launchd.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/Jake/Scripts/launchd.log</string>
+</dict>
+</plist>

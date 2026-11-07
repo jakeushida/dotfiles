@@ -78,6 +78,16 @@ elif [ $machine == "Mac" ]; then
     sudo tlmgr update --self
     sudo tlmgr install $(cat "$DOT_DIR/tex-packages.txt")
 
+    # 4. Daily macOS/iOS update reminder (emails via Apple Mail; sign in to Mail first)
+    #    The schedule runs ~/Scripts/update-check.sh, which links to the copy in this repo;
+    #    its state and log files stay in ~/Scripts and never enter the repo.
+    mkdir -p "$HOME/Scripts" "$HOME/Library/LaunchAgents"
+    ln -sfn "$DOT_DIR/macos/update-check.sh" "$HOME/Scripts/update-check.sh"
+    AGENT="$HOME/Library/LaunchAgents/com.jake.update-check.plist"
+    cp "$DOT_DIR/macos/com.jake.update-check.plist" "$AGENT"
+    launchctl bootout "gui/$(id -u)" "$AGENT" 2>/dev/null || true
+    launchctl bootstrap "gui/$(id -u)" "$AGENT" || echo "⚠️  couldn't start the update reminder (see above)"
+
     [ $tmux == true ] && brew install tmux
 fi
 
