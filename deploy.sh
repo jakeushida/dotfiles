@@ -3,6 +3,7 @@ set -euo pipefail
 USAGE=$(cat <<-END
     Usage: ./deploy.sh [--aliases=<alias1,alias2,...>]
     Creates ~/.zshrc with location specific config
+    On a Mac it also installs the daily macOS/iOS update reminder
 
     OPTIONS:
         --aliases=<names>       source config/aliases_<name>.sh in .zshrc for each name, separated by commas
@@ -38,4 +39,20 @@ if [ -n "${ALIASES+x}" ]; then
     for alias in "${ALIASES[@]}"; do
         echo "source $DOT_DIR/config/aliases_${alias}.sh" >> "$HOME/.zshrc"
     done
+fi
+
+# Daily macOS/iOS update reminder (Mac only; emails via Apple Mail, so sign in to Mail first)
+# The schedule runs ~/Scripts/update-check.sh, a COPY of the one in this repo.
+# (Not a link: macOS blocks background jobs from reading ~/Documents, where this
+# repo may live.) After editing or pulling macos/update-check.sh, re-run deploy.sh.
+# Its state and log files stay in ~/Scripts and never enter the repo.
+if [ "$(uname -s)" == "Darwin" ]; then
+    mkdir -p "$HOME/Scripts" "$HOME/Library/LaunchAgents"
+    rm -f "$HOME/Scripts/update-check.sh"    # remove first, in case it's an old link
+    cp "$DOT_DIR/macos/update-check.sh" "$HOME/Scripts/update-check.sh"
+    chmod +x "$HOME/Scripts/update-check.sh"
+    AGENT="$HOME/Library/LaunchAgents/com.jake.update-check.plist"
+    cp "$DOT_DIR/macos/com.jake.update-check.plist" "$AGENT"
+    launchctl bootout "gui/$(id -u)" "$AGENT" 2>/dev/null || true
+    launchctl bootstrap "gui/$(id -u)" "$AGENT" || echo "⚠️  couldn't start the update reminder (see above)"
 fi

@@ -11,6 +11,7 @@ USAGE=$(cat <<-END
 
     On a Mac it also installs Homebrew, everything in Brewfile
     and Brewfile.extra, and the LaTeX packages in tex-packages.txt.
+    (The daily update reminder is set up by deploy.sh.)
     If OPTIONS are passed they will be installed
     with apt if on linux or brew if on OSX
 END
@@ -77,20 +78,6 @@ elif [ $machine == "Mac" ]; then
     eval "$(/usr/libexec/path_helper)"    # puts the just-installed TeX on PATH
     sudo tlmgr update --self
     sudo tlmgr install $(cat "$DOT_DIR/tex-packages.txt")
-
-    # 4. Daily macOS/iOS update reminder (emails via Apple Mail; sign in to Mail first)
-    #    The schedule runs ~/Scripts/update-check.sh, a COPY of the one in this repo.
-    #    (Not a link: macOS blocks background jobs from reading ~/Documents, where this
-    #    repo may live.) After editing or pulling macos/update-check.sh, re-run install.sh.
-    #    Its state and log files stay in ~/Scripts and never enter the repo.
-    mkdir -p "$HOME/Scripts" "$HOME/Library/LaunchAgents"
-    rm -f "$HOME/Scripts/update-check.sh"    # remove first, in case it's an old link
-    cp "$DOT_DIR/macos/update-check.sh" "$HOME/Scripts/update-check.sh"
-    chmod +x "$HOME/Scripts/update-check.sh"
-    AGENT="$HOME/Library/LaunchAgents/com.jake.update-check.plist"
-    cp "$DOT_DIR/macos/com.jake.update-check.plist" "$AGENT"
-    launchctl bootout "gui/$(id -u)" "$AGENT" 2>/dev/null || true
-    launchctl bootstrap "gui/$(id -u)" "$AGENT" || echo "⚠️  couldn't start the update reminder (see above)"
 
     [ $tmux == true ] && brew install tmux
 fi
