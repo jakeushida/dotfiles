@@ -1,3 +1,4 @@
+tap "runpod/runpodctl"
 # GitHub command-line tool
 brew "gh"
 # Graph visualization software from AT&T and Bell Labs
@@ -10,6 +11,8 @@ brew "nano"
 brew "pandoc"
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
+# runpodctl is a CLI tool to manage your GPU pods on RunPod.
+brew "runpod/runpodctl/runpodctl", trusted: true
 # View, print, and comment on PDF documents
 cask "adobe-acrobat-reader"
 # Application uninstaller
